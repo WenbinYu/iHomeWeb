@@ -26,5 +26,8 @@ def get_app(config_name):
     # 开启Session
     Session(app)
 
+    from .api_1_0 import api
+    app.register_blueprint(api)
+
 
     return app
