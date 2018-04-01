@@ -10,7 +10,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # redis配置
-    REDIS_HOST = "192.168.200.128"
+    REDIS_HOST = "127.0.0.1"
     REDIS_PORT = 6379
 
     SECRET_KEY = "EjpNVSNQTyGi1VvWECj9TvC/+kq3oujee2kTfQUs8yCM6xX9Yjq52v54g+HVoknA"
@@ -28,8 +28,8 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """创建线上环境下的配置类"""
-
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@192.168.72.77:3306/iHome'
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/ihome01'
 
 
 class UnittestConfig(Config):
