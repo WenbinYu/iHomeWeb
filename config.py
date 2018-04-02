@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
 import redis
+import logging
 
 
 class Config(object):
-    DEBUG = True
+    # DEBUG = True
 
     # 数据库的配置信息
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/ihome01"
@@ -23,17 +24,20 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     """创建调试环境下的配置类"""
+    level = logging.DEBUG
     pass
 
 
 class ProductionConfig(Config):
     """创建线上环境下的配置类"""
-    DEBUG = False
+    # DEBUG = False
+    level = logging.WARNING
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/ihome01'
 
 
 class UnittestConfig(Config):
     """单元测试的配置"""
+    level = logging.INFO
 
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/iHome_testcast_07'
 

@@ -16,7 +16,7 @@ function generateUUID() {
     return uuid;
 }
 var uuid = "";
-var last_uuid = '';
+var pre_uuid = '';
 // 生成一个图片验证码的编号，并设置页面中图片验证码img标签的src属性
 function generateImageCode() {
     // 1.需要生成UUID
@@ -25,7 +25,7 @@ function generateImageCode() {
     // last_uuid = uuid;
 
     // 2.拼接请求地址 ： url = /api/1.0/image_code?uuid=uuid
-    var url = '/api/1.0/image_code?uuid=' + uuid + '&last_uuid=' + last_uuid;
+    var url = '/api/1.0/image_code?uuid=' + uuid + '&pre_uuid=' + pre_uuid;
 
     // 3.将url赋值给<img>标签的src属性
     // $('.image-code>img') : 表示从image-code标识的标签中直接找到子集<img>
@@ -33,7 +33,7 @@ function generateImageCode() {
     $('.image-code>img').attr('src', url);
 
     // 当前的uuid使用完成后，立即记录，下次再进入时，之前保存到last_uuid里面就是上次的uuid
-    last_uuid = uuid;
+    pre_uuid = uuid;
     
 }
 
