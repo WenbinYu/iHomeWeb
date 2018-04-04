@@ -4,7 +4,7 @@ import logging
 
 
 class Config(object):
-    # DEBUG = True
+    DEBUG = True
 
     # 数据库的配置信息
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/ihome01"
@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """创建线上环境下的配置类"""
-    # DEBUG = False
+    DEBUG = False
     level = logging.WARNING
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/ihome01'
 

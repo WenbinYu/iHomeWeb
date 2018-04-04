@@ -5,7 +5,20 @@ function getCookie(name) {
 
 // TODO: 点击推出按钮时执行的函数
 function logout() {
-    
+    $.ajax({
+        url:'/api/1.0/sessions',
+        type: 'delete',
+        headers : {
+            'X_CSRFToken': getCookie('crsf_token')
+        },
+        success: function (data) {
+                if('0' == data.errno){
+                    location.href = '/';
+                }else {
+                    alert(data.errmsg);
+                }
+            }
+    })
 }
 
 $(document).ready(function(){

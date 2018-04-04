@@ -36,7 +36,8 @@ function generateImageCode() {
     pre_uuid = uuid;
     
 }
-
+var params = {};
+var t = '' ;
 function sendSMSCode() {
     // 校验参数，保证输入框有数据填写
     $(".phonecode-a").removeAttr("onclick");
@@ -54,8 +55,45 @@ function sendSMSCode() {
         $(".phonecode-a").attr("onclick", "sendSMSCode();");
         return;
     }
-
     // TODO: 通过ajax方式向后端接口发送请求，让后端发送短信验证码
+    params = {
+        'mobile':mobile,
+        'imageCode':imageCode,
+        'uuid':uuid
+    };
+    $.ajax({
+        url: '/api/1.0/sms_codes',
+        type: "POST",
+        contentType: "application/json",  // 指明发送到后端的数据格式是json
+        data : JSON.stringify(params),
+        headers:{
+             "X-CSRFToken": getCookie("csrf_token") // 后端开启了csrf防护，所以前端发送json数据的时候，需要包含这个请求头
+        },
+         dataType: "json", // 指明后端返回到前端的数据是json格式的
+         success: function(data) {
+            if (data.errno == "0"){
+                var num = 30 ;
+                 t = setInterval(function () {
+                    if(num==0){
+                        clearInterval(t);
+                         // 重置内容
+                        $(".phonecode-a").html('获取验证码');
+                        // 重新添加点击事件
+                        $(".phonecode-a").attr("onclick", "sendSMSCode();");
+                    }else {
+                         // 正在倒计时，显示秒数
+                        $(".phonecode-a").html(num + '秒');
+                    }
+                    num -= 1;
+                },1000);
+            }else {
+               $(".phonecode-a").attr('onclick','sendSMSCode();');
+               generateImageCode();
+               alert(data.errmsg)
+            }
+         }
+         })
+
 }
 
 $(document).ready(function() {
@@ -78,4 +116,67 @@ $(document).ready(function() {
     });
 
     // TODO: 注册的提交(判断参数是否为空)
+    $('.form-register').submit(function () {
+        // 阻止form表单自己的提交时间
+        event.preventDefault();
+        var mobile = $("#mobile").val();
+        var password = $("#password").val();
+        var smscode = $("#phonecode").val();
+        var password2 = $("#password2").val();
+        if (!mobile) {
+            $("#mobile-err span").html('缺少手机号')
+            $("#mobile-err").show()
+            return;
+        }
+
+        if (!password) {
+            $("#password-err span").html('缺少验证码')
+            $("#password-err").show()
+            return;
+        }
+
+        if (!smscode) {
+            $("#phone-code-err span").html('缺少验证码')
+            $("#phone-code-err").show()
+            return;
+        }
+
+        if (!password2) {
+            $("#password2-err span").html('请输入确认密码')
+            $("#password2-err").show()
+            return;
+        }
+
+        if (password2 != password) {
+            $("#password2-err span").html('请确认密码')
+            $("#password2-err").show()
+            return;
+        }
+
+        parment = {
+            'mobile': mobile,
+            'password': password,
+            'smscode': smscode
+        };
+        $.ajax({
+            url: '/api/1.0/users',
+            type: "POST",
+            contentType: "application/json",  // 指明发送到后端的数据格式是json
+            data: JSON.stringify(parment),
+            headers: {
+                "X-CSRFToken": getCookie("csrf_token") // 后端开启了csrf防护，所以前端发送json数据的时候，需要包含这个请求头
+            },
+            dataType: "json", // 指明后端返回到前端的数据是json格式的
+            success: function (data) {
+                if (data.errno == "0") {
+                    location.href = '/'
+                } else {
+                    $("#password2-err span").html(data.errmsg)
+                    $("#password2-err").show()
+                }
+            }
+
+        })
+    })
+
 })

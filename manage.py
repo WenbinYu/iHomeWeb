@@ -25,5 +25,5 @@ if __name__ == '__main__':
 
     print app.url_map
 
-    # app.run()
-    manager.run()
+    app.run()
+    # manager.run()
