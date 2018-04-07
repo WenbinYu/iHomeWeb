@@ -13,8 +13,8 @@ $(document).ready(function() {
     // TODO: 添加登录表单提交操作
     $(".form-login").submit(function(e){
         e.preventDefault();
-        mobile = $("#mobile").val();
-        passwd = $("#password").val();
+        var mobile = $("#mobile").val();
+        var passwd = $("#password").val();
         if (!mobile) {
             $("#mobile-err span").html("请填写正确的手机号！");
             $("#mobile-err").show();
@@ -40,7 +40,9 @@ $(document).ready(function() {
             dataType : 'json',
             success: function (data) {
                 if('0' == data.errno){
+
                     location.href = data.next_url;
+
                 }else {
                     alert(data.errmsg);
                 }

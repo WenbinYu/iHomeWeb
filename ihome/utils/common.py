@@ -18,10 +18,10 @@ def login_requseted(view_func):
     def wrapper( *args,**kwargs):
         next_url = request.url
         user_id = session.get('user_id')
+        # g.next_url = next_url
         if not user_id:
-            return jsonify(errno=RET.SESSIONERR, errmsg='用户未登录')
+            return jsonify(errno=RET.SESSIONERR, errmsg='用户未登录',next_url = next_url)
         g.user_id = user_id
-        g.next_url = next_url
         return view_func(*args,**kwargs)
     return wrapper
 

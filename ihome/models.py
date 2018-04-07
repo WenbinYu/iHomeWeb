@@ -40,7 +40,22 @@ class User(BaseModel, db.Model):
     def check_password(self,value):
         return check_password_hash(self.password_hash,value)
 
+    def to_dict(self):
+        """将对象转换为字典数据"""
+        user_dict = {
+            'name':self.name,
+            'mobile':self.mobile,
+            'avatar_url': (constants.QINIU_DOMIN_PREFIX + (self.avatar_url if self.avatar_url else '') if self.avatar_url else ''),
+            'user_id': self.id
+        }
+        return user_dict
 
+    def to_author_dict(self):
+        author_dict = {
+            'real_name': self.real_name,
+            'id_card': self.id_card
+        }
+        return author_dict
 
 
 class Area(BaseModel, db.Model):

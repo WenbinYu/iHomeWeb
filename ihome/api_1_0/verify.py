@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+
+
 import random
 import re
 from . import api
@@ -61,10 +63,11 @@ def sms_code():
          return jsonify(errno=RET.DATAERR , errmsg='图片验证码错误')
     mobile_sms_code = '%06d' % random.randint(0,999999)
     current_app.logger.debug(mobile_sms_code)
-    result = CCP().send_sms(mobile,[mobile_sms_code,constants.SMS_CODE_REDIS_EXPIRES / 60],'1')
+    # result = CCP().send_sms(mobile,[mobile_sms_code,constants.SMS_CODE_REDIS_EXPIRES / 60],'1')
+    result = 0
     if result == 0:
         try:
-            redis_store.delete('ImageCode_' + uuid)
+            redis_store.delete('ImageCode:' + uuid)
         except Exception as e:
             current_app.logger.error(e)
             return jsonify(errno=RET.DATAERR, errmsg='删除本地图片验证码失败')
@@ -114,10 +117,10 @@ def register():
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='删除短信验证码失败')
-    user = User(name=mobile, mobile=mobile)
-    # user = User()
-    # user.name = mobile
-    # user.mobile = mobile
+    # user = User(name=mobile, mobile=mobile)
+    user = User()
+    user.name = mobile
+    user.mobile = mobile
     user.password = password
     try:
         db.session.add(user)
@@ -135,16 +138,16 @@ def register():
 @api.route('/sessions', methods=["POST"])
 def login():
     resq = request.json
-    next_url = g.next_url
-    url = request.url
-    if not  resq:
+    next_url = request.args.get('next','/')
+    print next_url
+    if not resq:
         return jsonify(errno=RET.NODATA, errmsg='请求参数错误')
     mobile = resq.get('mobile')
     password = resq.get('password')
     if not all([mobile,password]):
         return jsonify(errno=RET.PARAMERR, errmsg='用户参数不全')
     try:
-        user = User.query.filter_by(mobile = mobile).firsy()
+        user = User.query.filter_by(mobile = mobile).first()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='校对用户信息出错')
@@ -154,8 +157,7 @@ def login():
         session['user_id'] = user.id
         session['name'] = user.name
         session['mobile'] = mobile
-        if next_url == url :
-            next_url = '/'
+
         return jsonify(errno=RET.OK, errmsg='OK',next_url = next_url)
 
 
@@ -169,9 +171,9 @@ def login():
 def logout():
     user_id = int(g.user_id)
     user = User.query.get(user_id)
-    session.pop(user_id)
-    session.pop(user.name)
-    session.pop(user.mobile)
+    session.pop('user_id')
+    session.pop('name')
+    session.pop('mobile')
     return jsonify(errno=RET.OK, errmsg='登出成功')
 
 

@@ -8,7 +8,7 @@ function generateUUID() {
     if(window.performance && typeof window.performance.now === "function"){
         d += performance.now(); //use high-precision timer if available
     }
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = (d + Math.random()*16)%16 | 0;
         d = Math.floor(d/16);
         return (c=='x' ? r : (r&0x3|0x8)).toString(16);
@@ -116,7 +116,7 @@ $(document).ready(function() {
     });
 
     // TODO: 注册的提交(判断参数是否为空)
-    $('.form-register').submit(function () {
+    $('.form-register').submit(function(event) {
         // 阻止form表单自己的提交时间
         event.preventDefault();
         var mobile = $("#mobile").val();
@@ -153,7 +153,7 @@ $(document).ready(function() {
             return;
         }
 
-        parment = {
+        params = {
             'mobile': mobile,
             'password': password,
             'smscode': smscode
@@ -162,7 +162,7 @@ $(document).ready(function() {
             url: '/api/1.0/users',
             type: "POST",
             contentType: "application/json",  // 指明发送到后端的数据格式是json
-            data: JSON.stringify(parment),
+            data: JSON.stringify(params),
             headers: {
                 "X-CSRFToken": getCookie("csrf_token") // 后端开启了csrf防护，所以前端发送json数据的时候，需要包含这个请求头
             },
@@ -179,4 +179,4 @@ $(document).ready(function() {
         })
     })
 
-})
+});

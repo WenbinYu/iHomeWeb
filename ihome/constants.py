@@ -6,8 +6,11 @@ IMAGE_CODE_REDIS_EXPIRES = 300
 # 短信验证码Redis有效期，单位：秒
 SMS_CODE_REDIS_EXPIRES = 300
 
+QINIU_ACCESS_KEY =  'yV4GmNBLOgQK-1Sn3o4jktGLFdFSrlywR2C-hvsW'
+QINIU_SECRET_KEY = 'bixMURPL6tHjrb8QKVg2tm7n9k8C7vaOeQ4MEoeW'
+QINIU_BUCKET_HOME = 'ihome'
 # 七牛空间域名
-QINIU_DOMIN_PREFIX = "http://o91qujnqh.bkt.clouddn.com/"
+QINIU_DOMIN_PREFIX = "http://oyucyko3w.bkt.clouddn.com/"
 
 # 城区信息redis缓存时间，单位：秒
 AREA_INFO_REDIS_EXPIRES = 7200
