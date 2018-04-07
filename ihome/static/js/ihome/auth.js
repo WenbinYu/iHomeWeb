@@ -44,7 +44,7 @@ $(document).ready(function(){
             'id_card':id_card
         };
          $.ajax({
-            url:'/api/1.0/user/auth',
+            url:'/api/1.0/users/auth',
             type:'post',
             data:JSON.stringify(params),
             contentType:'application/json',

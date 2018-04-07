@@ -86,7 +86,7 @@ def set_user_profile():
     session['nmae'] = new_name
     return jsonify(errno=RET.OK, errmsg='OK')
 
-@api.route('/users/auth',methods =['GET', 'POST'])
+@api.route('/users/auth',methods =['POST','GET'])
 @login_requseted
 def set_auth_name():
     user_id = int(g.user_id)
