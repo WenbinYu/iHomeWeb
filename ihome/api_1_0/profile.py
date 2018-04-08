@@ -120,3 +120,19 @@ def set_auth_name():
     return jsonify(errno=RET.OK, errmsg='OK')
 
 
+@api.route('/users/sessions')
+def get_sessions():
+    user_id = session.get("user_id")
+    name = session.get('name')
+    mobile = session.get('mobile')
+
+    if not all([user_id,name,mobile]):
+        return jsonify(errno=RET.SESSIONERR, errmsg='用户未登录')
+    resp = {
+        'user_id':user_id,
+        'name':name,
+        'mobile':mobile
+    }
+    return jsonify(errno=RET.OK, errmsg='OK',resp =resp)
+
+
