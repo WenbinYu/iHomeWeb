@@ -13,12 +13,12 @@ function getCookie(name) {
 }
 
 $(document).ready(function(){
-    // TODO: 查询用户的实名认证信息
+    //  查询用户的实名认证信息
     $.get('/api/1.0/users/auth',function (data) {
         if('0' == data.errno){
-            if(data.auth_dict.real_name && data.auth_dict.id_card){
-                 $('#real-name').val(data.auth_dict.real_name);
-                 $('#id-card').val(data.auth_dict.id_card);
+            if(data.resp.auth_dict.real_name && data.resp.auth_dict.id_card){
+                 $('#real-name').val(data.resp.auth_dict.real_name);
+                 $('#id-card').val(data.resp.auth_dict.id_card);
                  $('.form-control').attr('disabled', true);
                  $('.btn-success').hide();
             }
@@ -30,7 +30,7 @@ $(document).ready(function(){
         }
     });
 
-    // TODO: 管理实名信息表单的提交行为
+    // 管理实名信息表单的提交行为
     $('#form-auth').submit(function (e) {
         e.preventDefault();
         var real_name =  $('#real-name').val();

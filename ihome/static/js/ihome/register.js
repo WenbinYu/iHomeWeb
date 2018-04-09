@@ -55,7 +55,7 @@ function sendSMSCode() {
         $(".phonecode-a").attr("onclick", "sendSMSCode();");
         return;
     }
-    // TODO: 通过ajax方式向后端接口发送请求，让后端发送短信验证码
+    //  通过ajax方式向后端接口发送请求，让后端发送短信验证码
     params = {
         'mobile':mobile,
         'imageCode':imageCode,
@@ -115,7 +115,7 @@ $(document).ready(function() {
         $("#password2-err").hide();
     });
 
-    // TODO: 注册的提交(判断参数是否为空)
+    // 注册的提交(判断参数是否为空)
     $('.form-register').submit(function(event) {
         // 阻止form表单自己的提交时间
         event.preventDefault();

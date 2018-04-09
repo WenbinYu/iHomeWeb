@@ -74,7 +74,7 @@ $(document).ready(function(){
         if('0' == data.errno){
             var html = template('swiper-houses-tmpl',{'houses':data.index_houses});
             $('.swiper-wrapper').append(html);
-             // TODO: 数据设置完毕后,需要设置幻灯片对象，开启幻灯片滚动
+             //  数据设置完毕后,需要设置幻灯片对象，开启幻灯片滚动
              var mySwiper = new Swiper ('.swiper-container', {
         loop: true,
         autoplay: 2000,

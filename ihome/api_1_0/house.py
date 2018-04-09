@@ -1,14 +1,16 @@
 # -*- coding:utf-8 -*-
+import datetime
 
 from . import api
 from flask import current_app,session,request,jsonify,g
-from ihome.models import Area,HouseImage,House, User,Facility
+from ihome.models import Area,HouseImage,House, User,Facility,Order
 from ihome import redis_store,db
 from ihome.utils.response_code import RET
 from ihome import constants
 from ihome.utils.common import login_requseted
 from ihome.utils.image_storage import upload_image
 from ihome import constants
+import time
 
 
 
@@ -200,8 +202,69 @@ def get_house_image():
     return jsonify(errno=RET.OK, errmsg='OK',index_houses = index_houses)
 
 
+@api.route('/houses/list')
+def search_house():
+    req = request.args
+    area_id = req.get('aid', '')
+    start_date_str = req.get('sd', '')
+    end_date_str = req.get('ed', '')
+    # booking(订单量), price-inc(低到高), price-des(高到低),
+    sort_key = req.get('sk', 'new')
+    page = req.get('p', '1')
+    try:
+        page = int(page)
+        start_date = None
+        end_date = None
+        if start_date_str:
+            start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+        if end_date_str:
+            end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+        if end_date and start_date:
+            assert end_date > start_date ,Exception('开始时间大于结束时间')
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DATAERR, errmsg='请求参数有错误')
 
+    house_query = House.query
+    try:
+        if area_id:
+            house_query = house_query.filter(House.area_id == int(area_id))
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DATAERR, errmsg='请求参数有错误')
+    order_list = []
+    if end_date and start_date:
+        order_list = Order.query.filter(end_date > Order.begin_date,start_date < Order.end_date).all()
+    elif start_date:
+        order_list = Order.query.filter(start_date < Order.end_date).all()
+    elif end_date:
+        order_list =Order.query.filter(end_date > Order.begin_date).all()
+    if order_list:
+        order_list_house = [order.house_id for order in order_list]
 
+        house_query = house_query.filter(House.id.notin_(order_list_house) )
+
+    if sort_key == 'booking':
+        house_query = house_query.order_by(House.order_count.desc())
+    elif sort_key == 'price-inc':
+        house_query = house_query.order_by(House.price)
+    elif sort_key == 'price-des':
+        house_query = house_query.order_by(House.price.desc())
+    else:
+        house_query = house_query.order_by(House.create_time.desc())
+
+        # 使用paginate进行分页
+    house_pages = house_query.paginate(page, constants.HOUSE_LIST_PAGE_CAPACITY, False)
+    # 获取当前页对象
+    houses = house_pages.items
+    # 获取总页数
+    total_page = house_pages.pages
+
+    house_dict = []
+    for house in houses:
+        house_dict.append(house.to_basic_dict())
+
+    return jsonify(errno=RET.OK, errmsg='请求成功', resp={"total_page": total_page, "houses": house_dict})
 
 
 

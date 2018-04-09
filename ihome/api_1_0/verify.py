@@ -138,8 +138,6 @@ def register():
 @api.route('/sessions', methods=["POST"])
 def login():
     resq = request.json
-    next_url = request.args.get('next','/')
-    print next_url
     if not resq:
         return jsonify(errno=RET.NODATA, errmsg='请求参数错误')
     mobile = resq.get('mobile')
@@ -158,7 +156,7 @@ def login():
         session['name'] = user.name
         session['mobile'] = mobile
 
-        return jsonify(errno=RET.OK, errmsg='OK',next_url = next_url)
+        return jsonify(errno=RET.OK, errmsg='OK')
 
 
     return jsonify(errno=RET.PARAMERR, errmsg='用户名或密码错误')

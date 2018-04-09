@@ -100,8 +100,16 @@ def set_auth_name():
         return jsonify(errno=RET.USERERR, errmsg='用户不存在')
     if request.method == 'GET':
         auth_dict = user.to_author_dict()
-        return jsonify(errno=RET.OK, errmsg='OK',auth_dict = auth_dict)
-
+        auth_houses = user.houses
+        houses = []
+        if auth_houses:
+            for house in auth_houses:
+                houses.append(house.to_basic_dict())
+        resp = {
+            'auth_dict':auth_dict,
+            'houses':houses
+        }
+        return jsonify(errno=RET.OK, errmsg='OK', resp = resp)
     real_name = request.json.get('real_name')
     id_card = request.json.get('id_card')
     if not all([real_name,id_card]):

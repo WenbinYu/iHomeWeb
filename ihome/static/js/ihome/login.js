@@ -3,14 +3,31 @@ function getCookie(name) {
     return r ? r[1] : undefined;
 }
 
+function hrefBack() {
+    history.go(-2);
+}
+
+
+function decodeQuery(){
+    var search = decodeURI(document.location.search);
+    return search.replace(/(^\?)/, '').split('&').reduce(function(result, item){
+        values = item.split('=');
+        result[values[0]] = values[1];
+        return result;
+    }, {});
+}
+
+
 $(document).ready(function() {
+    var queryData = decodeQuery();
+    var next = queryData["next"];
     $("#mobile").focus(function(){
         $("#mobile-err").hide();
     });
     $("#password").focus(function(){
         $("#password-err").hide();
     });
-    // TODO: 添加登录表单提交操作
+    // 添加登录表单提交操作
     $(".form-login").submit(function(e){
         e.preventDefault();
         var mobile = $("#mobile").val();
@@ -40,8 +57,12 @@ $(document).ready(function() {
             dataType : 'json',
             success: function (data) {
                 if('0' == data.errno){
-
-                    location.href = data.next_url;
+                    // if(next){
+                    //     // hrefBack();
+                    //     history.back();
+                    //     return;
+                    // }
+                    location.href = '/';
 
                 }else {
                     alert(data.errmsg);
@@ -51,4 +72,4 @@ $(document).ready(function() {
 
         })
     })
-})
+});

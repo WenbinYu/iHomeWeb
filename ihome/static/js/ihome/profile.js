@@ -12,20 +12,20 @@ function getCookie(name) {
 }
 
 $(document).ready(function () {
-    // TODO: 在页面加载完毕向后端查询用户的信息
+    //  在页面加载完毕向后端查询用户的信息
      $.get('/api/1.0/users',function (data) {
         if('0' == data.errno){
             $('#user-name').val(data.user_dict.name);
             $('#user-avatar').attr('src',data.user_dict.avatar_url);
 
         }else if ('4101' == data.errno) {
-            location.href = 'login'
+            location.href = 'login?next='+data.next_url
         }else {
             alert('请完善个人信息')
         }
     });
 
-    // TODO: 管理上传用户头像表单的行为
+    //  管理上传用户头像表单的行为
     $('#form-avatar').submit(function (e) {
         e.preventDefault();
         $(this).ajaxSubmit({
@@ -39,14 +39,14 @@ $(document).ready(function () {
                     $('#user-avatar').attr('src', response.avatar_uravl);
 
                 } else if ('4101' == response.errno ) {
-                    location.href = 'login';
+                    location.href = 'login?next='+response.next_url
                 } else {
                     alert(response.errmsg);
                 }
             }
         });
     });
-    // TODO: 管理用户名修改的逻辑
+    //  管理用户名修改的逻辑
      $('#form-name').submit(function (e) {
         e.preventDefault();
         var new_name = $('#user-name').val();
@@ -69,7 +69,7 @@ $(document).ready(function () {
                     showSuccessMsg();
 
                 } else if ('4101' == response.errno ) {
-                    location.href = 'login';
+                   location.href = 'login?next='+response.next_url
                 } else {
                     alert(response.errmsg);
                 }
