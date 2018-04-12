@@ -29,7 +29,7 @@ $(document).ready(function(){
     var houseId = queryData["id"];
 
     //  获取该房屋的详细信息
-    $.get('/api/1.0/house/detail/'+ houseId, function (data) {
+    $.get('/api/1.0/house/detail/'+ houseId +'?desc=full', function (data) {
         if ('0' == data.errno) {
             var list_html = template('house-image-tmpl', {img_urls: data.resp.house_dict.img_urls,price:data.resp.house_dict.price});
             $('.swiper-container').html(list_html);
@@ -43,7 +43,17 @@ $(document).ready(function(){
                  $('.book-house').hide();
              }else {
                     $('.book-house').show();
-                    $('.book-house').attr('href','booking.html?hid=' + data.resp.house_dict.hid);
+                    $('.book-house').on('click',function (e) {
+                        e.preventDefault();
+                        $.get('/api/1.0/users/sessions',function (response) {
+                            if('0' == response.errno){
+                                alert(data.resp.house_dict.hid);
+                                 location.href = 'booking?hid='+data.resp.house_dict.hid;
+                            }else {
+                                location.href = 'login'
+                            }
+                    })
+                    })
              }
 
         } else {

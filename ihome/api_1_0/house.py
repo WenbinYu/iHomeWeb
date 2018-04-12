@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
-import datetime
 
+import datetime
 from . import api
 from flask import current_app,session,request,jsonify,g
 from ihome.models import Area,HouseImage,House, User,Facility,Order
@@ -10,7 +10,7 @@ from ihome import constants
 from ihome.utils.common import login_requseted
 from ihome.utils.image_storage import upload_image
 from ihome import constants
-import time
+
 
 
 
@@ -157,6 +157,13 @@ def set_house_image():
 
 @api.route('/house/detail/<int:house_id>')
 def house_detail(house_id):
+    try:
+        descrip = request.args.get('desc')
+        if descrip not in ['basic','full']:
+            return jsonify(errno=RET.PARAMERR, errmsg='请求参数不符合要求')
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg='获取参数错误')
     if not house_id:
         return jsonify(errno=RET.DATAEXIST, errmsg='缺少参数')
     try:
@@ -167,7 +174,10 @@ def house_detail(house_id):
     if not house:
         return jsonify(errno=RET.DATAEXIST, errmsg='房屋信息不存在')
     user_id = session.get('user_id')
-    house_dict = house.to_full_dict()
+    if descrip == 'full':
+        house_dict = house.to_full_dict()
+    else:
+        house_dict = house.to_basic_dict()
     resp = {
         'house_dict':house_dict,
         'user_id':user_id
@@ -265,6 +275,7 @@ def search_house():
         house_dict.append(house.to_basic_dict())
 
     return jsonify(errno=RET.OK, errmsg='请求成功', resp={"total_page": total_page, "houses": house_dict})
+
 
 
 
